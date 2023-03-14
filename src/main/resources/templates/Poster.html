@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Афиша</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Наименование постановки</th>
+            <th>Дата</th>
+            <th>Цена</th>
+        </tr>
+        <tr th:each="el : ${posters}">
+            <td th:text="${el.name_perfomance}"></td>
+            <td th:text="${el.data}"></td>
+            <td th:text="${el.price}"></td>
+        </tr>
+    </table>
+    <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+</div>
+</body>
+</html>

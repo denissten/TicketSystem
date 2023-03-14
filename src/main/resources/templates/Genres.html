@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Жанры</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right; margin-bottom: 5px;
+    }
+    #buttons{
+        float: right; width: 190px;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    .selected {
+        background: #808080;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Наименование жанра</th>
+        </tr>
+        <tr th:each="el : ${genres}" th:id="'r_'+${el.id_genre}"  th:attr="onclick=|setSelectedRow('${el.id_genre}')|" >
+            <td th:text="${el.name_genre}"></td>
+        </tr>
+    </table>
+    <div id="buttons">
+        <input type="text" id="name_genre" placeholder="Имя жанра">
+        <input type="button" value="Добавить" onclick="add()">
+        <input type="button" value="Изменить" onclick="change()">
+        <input type="button" value="Удалить" onclick="remove()">
+        <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    </div>
+</div>
+</body>
+<script>
+    var selectedRow = -1;
+    function setSelectedRow(row){
+        if (selectedRow != -1){
+            document.getElementById('r_'+selectedRow).className = "";
+        }
+        selectedRow = row;
+        document.getElementById('r_'+selectedRow).className = "selected";
+    }
+    function add(){
+        var name_genre = document.getElementById("name_genre").value;
+        if (name_genre.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addgenre");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'name_genre=' + name_genre;
+        xhr.send(data);
+    }
+    function change(){
+        var name_genre = document.getElementById("name_genre").value;
+        if (name_genre.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        if (selectedRow == -1) {
+            alert("Выделите строчку для редактирования!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/changegenre");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'name_genre=' + name_genre + '&id=' + selectedRow;
+        xhr.send(data);
+    }
+    function remove(){
+        var name_genre = document.getElementById("name_genre").value;
+        if (selectedRow == -1) {
+            alert("Выделите строчку для удаления!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/removegenre");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow;
+        xhr.send(data);
+    }
+</script>
+</html>

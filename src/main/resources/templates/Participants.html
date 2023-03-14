@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Список участников</title>
+    <style>
+    .content {
+        width: 1000px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right; margin-bottom: 5px;
+    }
+    #buttons{
+        float: right; width: 190px;
+    }
+    .tblcontent{
+        max-width: 725px;
+    }
+    table {
+        float: left;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    .selected {
+        background: #808080;
+    }
+    select{
+        width: 180px;
+    }
+    p {
+        width: 180px;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <div class="tblcontent">
+    <table>
+        <tr>
+            <th>Роль</th>
+            <th>Постановка</th>
+            <th>Дата</th>
+            <th>Отчество</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Должность</th>
+            <th>Оклад</th>
+            <th>Тембр голоса</th>
+            <th>Пол</th>
+        </tr>
+        <tr th:each="el : ${participants}" th:id="'r_'+${el.id}"  th:attr="onclick=|setSelectedRow('${el.id}')|" >
+            <td th:text="${el.characters}"></td>
+            <td th:text="${el.performance_name}"></td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.otchestvo}"></td>
+            <td th:text="${el.name}"></td>
+            <td th:text="${el.familia}"></td>
+            <td th:text="${el.doljnost}"></td>
+            <td th:text="${el.oklad}"></td>
+            <td th:text="${el.voice}"></td>
+            <td th:text="${el.pol}"></td>
+        </tr>
+    </table>
+    </div>
+    <div id="buttons">
+        <input type="text" id="role" placeholder="Роль">
+        <p>Выбор постановки</p>
+        <select id="performances">
+            <option th:each="el : ${performances}" th:id="${el.id_perfomance}" th:text="${el.name_perfomance}"></option>
+        </select>
+        <p>Выбор участника</p>
+        <select id="sotrudniks">
+            <option th:each="el : ${sotrudniks}" th:id="${el.id_sotrudnik}" th:text="${el.familia}"></option>
+        </select>
+        <input type="button" value="Добавить" onclick="add()" style="margin-top: 25px;">
+        <input type="button" value="Изменить" onclick="change()">
+        <input type="button" value="Удалить" onclick="remove()">
+        <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    </div>
+</div>
+</body>
+<script>
+    var selectedRow = -1;
+    function setSelectedRow(row){
+        if (selectedRow != -1){
+            document.getElementById('r_'+selectedRow).className = "";
+        }
+        selectedRow = row;
+        document.getElementById('r_'+selectedRow).className = "selected";
+    }
+    function add(){
+        var characters = document.getElementById("role").value;
+        if (characters.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addparticipants");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+
+        var performances = document.getElementById("performances"),
+        sotrudniks = document.getElementById("sotrudniks");
+        let data = 'characters=' + characters + '&performances=' + performances.options[performances.selectedIndex].id +
+        '&sotrudniks=' + sotrudniks.options[sotrudniks.selectedIndex].id;
+        xhr.send(data);
+
+    }
+    function change(){
+        var characters = document.getElementById("role").value;
+        if (characters.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        if (selectedRow == -1) {
+            alert("Выделите строчку для редактирования!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/changeparticipants");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow + '&characters=' + characters + '&performances=' + performances.options[performances.selectedIndex].id +
+        '&sotrudniks=' + sotrudniks.options[sotrudniks.selectedIndex].id;
+        xhr.send(data);
+    }
+    function remove(){
+        if (selectedRow == -1) {
+            alert("Выделите строчку для удаления!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/removeparticipants");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow;
+        xhr.send(data);
+    }
+</script>
+</html>

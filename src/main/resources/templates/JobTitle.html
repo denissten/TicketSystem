@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Список должностей</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right; margin-bottom: 5px;
+    }
+    #buttons{
+        float: right; width: 190px;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    .selected {
+        background: #808080;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Наименование должности</th>
+            <th>Оклад</th>
+        </tr>
+        <tr th:each="el : ${doljnosts}" th:id="'r_'+${el.id_doljnost}"  th:attr="onclick=|setSelectedRow('${el.id_doljnost}')|" >
+            <td th:text="${el.name_doljnost}"></td>
+            <td th:text="${el.oklad}"></td>
+        </tr>
+    </table>
+    <div id="buttons">
+        <input type="text" id="jobTitle" placeholder="Имя должности">
+        <input type="text" id="oklad" placeholder="Оклад">
+        <input type="button" value="Добавить" onclick="add()">
+        <input type="button" value="Изменить" onclick="change()">
+        <input type="button" value="Удалить" onclick="remove()">
+        <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    </div>
+</div>
+</body>
+<script>
+    var selectedRow = -1;
+    function setSelectedRow(row){
+        if (selectedRow != -1){
+            document.getElementById('r_'+selectedRow).className = "";
+        }
+        selectedRow = row;
+        document.getElementById('r_'+selectedRow).className = "selected";
+    }
+    function add(){
+        var jobTitle = document.getElementById("jobTitle").value,
+            oklad = document.getElementById("oklad").value;
+        if (jobTitle.length == 0 || oklad.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addjobtitle");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'jobTitle=' + jobTitle + '&oklad=' + oklad;
+        xhr.send(data);
+    }
+    function change(){
+        var jobTitle = document.getElementById("jobTitle").value,
+            oklad = document.getElementById("oklad").value;
+        if (jobTitle.length == 0 || oklad.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        if (selectedRow == -1) {
+            alert("Выделите строчку для редактирования!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/changejobtitle");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'jobTitle=' + jobTitle + '&oklad=' + oklad+'&id='+selectedRow;
+        xhr.send(data);
+    }
+    function remove(){
+        if (selectedRow == -1) {
+            alert("Выделите строчку для удаления!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/removejobtitle");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow;
+        xhr.send(data);
+    }
+</script>
+</html>

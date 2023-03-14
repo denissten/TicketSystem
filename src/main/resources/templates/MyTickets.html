@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои билеты</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Организация</th>
+            <th>Представление</th>
+            <th>Адрес</th>
+            <th>Дата</th>
+            <th>Билеты</th>
+            <th>Цена</th>
+            <th>Статус</th>
+        </tr>
+        <tr th:each="el : ${tickets}">
+            <td th:text="${el.naimenovanie_organizacii}"></td>
+            <td th:text="${el.perfomance_name}"></td>
+            <td th:text="${el.adres}"></td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.ticketCount}"></td>
+            <td th:text="${el.price}"></td>
+            <td th:text="${el.status}"></td>
+        </tr>
+    </table>
+    <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+</div>
+</body>
+</html>

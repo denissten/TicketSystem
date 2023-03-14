@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right; margin-bottom: 5px;
+    }
+    #buttons{
+        float: right; width: 190px;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    .selected {
+        background: #808080;
+    }
+    select{
+        width: 180px;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Роль</th>
+        </tr>
+        <tr th:each="el : ${users}" th:id="'r_'+${el.id}"  th:attr="onclick=|setSelectedRow('${el.id}')|" >
+            <td th:text="${el.name}"></td>
+            <td th:text="${el.family}"></td>
+            <td th:text="${el.otchestvo}"></td>
+            <td th:text="${el.role}"></td>
+        </tr>
+    </table>
+    <div id="buttons">
+        <input type="text" id="name" placeholder="Имя">
+        <input type="text" id="familia" placeholder="Фамилия">
+        <input type="text" id="otchestvo" placeholder="Отчество">
+        <p>Роль</p>
+        <select id="role">
+            <option id="1">Пользователь</option>>
+            <option id="2">Сотрудник</option>>
+            <option id="3">Администратор</option>>
+        </select>
+        <input type="button" value="Изменить" onclick="change()">
+        <input type="button" value="Удалить" onclick="remove()">
+        <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    </div>
+</div>
+</body>
+<script>
+    var selectedRow = -1;
+    function setSelectedRow(row){
+        if (selectedRow != -1){
+            document.getElementById('r_'+selectedRow).className = "";
+        }
+        selectedRow = row;
+        document.getElementById('r_'+selectedRow).className = "selected";
+    }
+    function change(){
+        var name = document.getElementById("name").value,
+        familia = document.getElementById("familia").value,
+        otchestvo = document.getElementById("otchestvo").value;
+        if (name.length == 0 || familia.length == 0 || otchestvo.length == 0){
+            alert("Заполните все поля!");
+            return;
+        }
+        if (selectedRow == -1) {
+            alert("Выделите строчку для редактирования!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/changeuser");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        var role = document.getElementById("role");
+        let data = 'id=' + selectedRow +  '&name=' + name + '&familia=' + familia +
+        '&otchestvo=' + otchestvo + '&urole=' + role.options[role.selectedIndex].id;
+        xhr.send(data);
+    }
+    function remove(){
+        if (selectedRow == -1) {
+            alert("Выделите строчку для удаления!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/removeuser");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow;
+        xhr.send(data);
+    }
+</script>
+</html>

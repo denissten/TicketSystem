@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Покупка билета</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px;
+    }
+    #error{
+        color: red;
+    }
+    #success{
+        color: #007100;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <form action="buyticket" method="post">
+        <input type="submit" value="Купить"><br>
+        <input type="button" value="Посчитать" onclick="total()"><br>
+        <input id="count" type="text" name="ticketcount" placeholder="Количество билетов"><br>
+        <p>Выберите постановку</p>
+        <select id="perfomance" name="id_perfomance">
+            <option th:each="el : ${perfomances}" th:value="${el.id_perfomance}" th:text="${el.name_perfomance}"
+                    th:id="${el.price}"></option>
+        </select>
+        <p>К оплате</p>
+        <p id="total">0</p>
+        <p>Карточка банка</p>
+        <select name="bank_card">
+            <option th:each="el : ${cards}" th:value="${el.id_card}" th:text="${el.bankName}"></option>
+        </select>
+    </form>
+    <h3 th:id=${message_type} th:text=${info_message}></h3>
+    <input type="button" value="Вернуться" style="margin-top: 50px;" onclick="location.href = '/menu';">
+</div>
+</body>
+<script>
+    function total(){
+        var e = document.getElementById("perfomance");
+        document.getElementById("total").innerHTML = e.options[e.selectedIndex].id * document.getElementById("count").value;
+    }
+</script>
+</html>

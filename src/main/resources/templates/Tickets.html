@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Билеты</title>
+    <style>
+    .content {
+        width: 1200px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px; float: right; margin-bottom: 5px;
+    }
+    #buttons{
+        float: right; width: 190px;
+    }
+    table {
+        float: left;
+        width: 400px;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    .selected {
+        background: #808080;
+    }
+    select{
+        width: 180px;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Организация</th>
+            <th>Дата</th>
+            <th>Адрес</th>
+            <th>Название представления</th>
+            <th>Количество билетов</th>
+            <th>Цена</th>
+            <th>Статус</th>
+
+        </tr>
+        <tr th:each="el : ${tickets}" th:id="'r_'+${el.id}"  th:attr="onclick=|setSelectedRow('${el.id}','${el.userid}')|" >
+            <td th:text="${el.name}"></td>
+            <td th:text="${el.familia}"></td>
+            <td th:text="${el.otchestvo}"></td>
+            <td th:text="${el.orgname}"></td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.adres}"></td>
+            <td th:text="${el.performance}"></td>
+            <td th:text="${el.tickets}"></td>
+            <td th:text="${el.price}"></td>
+            <td th:text="${el.status}"></td>
+        </tr>
+    </table>
+    <div id="buttons">
+        <input type="button" value="Забронирован" onclick="changeStatus(1)">
+        <input type="button" value="Не одобрен" onclick="changeStatus(2)">
+        <input type="button" value="На рассмотрении" onclick="changeStatus(3)">
+        <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    </div>
+</div>
+</body>
+<script>
+    var selectedRow = -1;
+    var userid = -1;
+    function setSelectedRow(row, uid){
+        if (selectedRow != -1){
+            document.getElementById('r_'+selectedRow).className = "";
+        }
+        selectedRow = row;
+        userid = uid;
+        console.log(selectedRow);
+        document.getElementById('r_'+selectedRow).className = "selected";
+    }
+    function changeStatus(status){
+    if (selectedRow == -1) {
+            alert("Выделите строчку для удаления!");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/tickets");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        let data = 'id=' + selectedRow + '&status=' + status + '&uid=' + userid;
+        xhr.send(data);
+    }
+</script>
+</html>

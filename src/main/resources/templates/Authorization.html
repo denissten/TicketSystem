@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px;
+    }
+    #error{
+        color: red;
+    }
+    #success{
+        color: #007100;
+    }
+
+    </style>
+</head>
+<body>
+<div class="content">
+    <form action="/" method="post">
+        <input type="text" name="login" placeholder="Логин"/><br>
+        <input type="text" name="password" placeholder="Пароль"/><br>
+        <input type="submit" value="Войти"/>
+    </form>
+    <input type="button" value="Регистрация" onclick="window.location.href='/registration';"><br>
+    <h3 th:id=${message_type} th:text=${info_message}></h3>
+</div>
+</body>
+</html>

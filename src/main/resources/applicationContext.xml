@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:property-placeholder location="classpath:db.properties" />
+
+
+    <bean id="Database" class="database.Database">
+        <constructor-arg value="${db.url}"/>
+        <constructor-arg value="${db.username}"/>
+        <constructor-arg value="${db.password}"/>
+    </bean>
+    <bean id="JFrame" class="javax.swing.JFrame"> </bean>
+    <bean id="Application" class="application.TicketSystem">
+        <constructor-arg ref="JFrame"/>
+        <constructor-arg ref="Database"/>
+    </bean>
+    <bean id="Login" class="gui.Login" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Registration" class="gui.Registration" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="UserMenu" class="gui.client.UserMenu" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Poster" class="gui.client.Poster" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="BuyTicket" class="gui.client.BuyTicket" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="MyTickets" class="gui.client.MyTickets" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Cards" class="gui.client.Cards" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="EmployeeMenu" class="gui.employee.EmployeeMenu" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="AdminMenu" class="gui.employee.AdministratorMenu" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Employees" class="gui.employee.Employees" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Genres" class="gui.employee.Genres" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="JobTitle" class="gui.employee.JobTitle" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Participants" class="gui.employee.Participants" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Performances" class="gui.employee.Performances" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Tickets" class="gui.employee.Tickets" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+    <bean id="Users" class="gui.employee.Users" scope="prototype">
+        <constructor-arg ref="Application"/>
+    </bean>
+</beans>

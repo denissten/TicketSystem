@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои карты</title>
+    <style>
+    .content {
+        width: 800px; height: 600px; margin: 0 auto; text-align: center;
+        }
+    input{
+        width: 180px;
+    }
+    select{
+        width: 180px;
+    }
+    #error{
+        color: red;
+    }
+    #success{
+        color: #007100;
+    }
+    </style>
+</head>
+<body>
+<div class="content">
+    <form action="mycards" method="post">
+        <input type="text" name="bankName" placeholder="Выбор банка"><br>
+        <input type="text" name="cardNumber" placeholder="Номер карты"><br>
+        <input type="text" name="date" placeholder="Срок"><br>
+        <input type="text" name="cvv" placeholder="CVV"><br>
+        <input type="submit" value="Оформить" style="margin-bottom: 25px;">
+    </form>
+    <p id="balance">Баланс: 0</p>
+    <select th:id="cardlist" onchange="switchBalance()">
+        <option selected id="-1" value="0">Выберите карту</option>>
+        <option th:each="el : ${cards}" th:value="${el.balance}" th:id="${el.id_card}" th:text="${el.bankName}"></option>
+    </select><br>
+    <input type="text" id="balance_value" placeholder="Введите сумму"><br>
+    <input type="button" value="Пополнить баланс" onclick="addBalance()"><br>
+    <input type="button" value="Удалить карточку" onclick="deleteCard()"><br>
+    <input type="button" value="Вернуться" onclick="location.href = '/menu';">
+    <h3 th:id=${message_type} th:text=${info_message}></h3>
+</div>
+</body>
+<script>
+    function deleteCard(){
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/deletecard");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4){
+            if (xhr.status == 200)
+                location.reload();
+          }};
+        var e = document.getElementById("cardlist");
+        let data = 'id=' + e.options[e.selectedIndex].id;
+        xhr.send(data);
+    }
+    function switchBalance(){
+        var e = document.getElementById("cardlist");
+        document.getElementById("balance").innerHTML = 'Баланс: ' + e.options[e.selectedIndex].value;
+    }
+    function addBalance(){
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addbalance");
+        xhr.setRequestHeader("Accept", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status == 200)
+                location.reload();
+
+          }};
+        var e = document.getElementById("cardlist");
+        let data = 'id=' + e.options[e.selectedIndex].id + '&value='+document.getElementById("balance_value").value;
+        xhr.send(data);
+    }
+</script>
+</html>
